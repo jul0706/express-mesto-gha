@@ -33,8 +33,14 @@ const createUser = (req, res) => {
     .catch((err) => res.status(500).send({ message: 'Iternal server error', err: err.message, stack: err.stack }));
 };
 
-const updateUser = (req, res) => {
+const updateUserInfo = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { ...req.body }, { new: true })
+    .then((newUser) => res.status(201).send(newUser))
+    .catch((err) => res.status(500).send({ message: 'Iternal server error', err: err.message, stack: err.stack }));
+};
+
+const updateUserAvatar = (req, res) => {
+  User.findByIdAndUpdate(req.user._id, ({ avatar: req.body.avatar }), { new: true })
     .then((newUser) => res.status(201).send(newUser))
     .catch((err) => res.status(500).send({ message: 'Iternal server error', err: err.message, stack: err.stack }));
 };
@@ -43,5 +49,6 @@ module.exports = {
   getUsers,
   getUserById,
   createUser,
-  updateUser,
+  updateUserInfo,
+  updateUserAvatar,
 };
