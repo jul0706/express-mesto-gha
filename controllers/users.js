@@ -26,7 +26,13 @@ const getUserById = (req, res) => {
     .orFail(() => new Error('Not found'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      if (err.message === 'Not found') {
+      if (err.name === 'CastError') {
+        res
+          .status(400)
+          .send({
+            message: 'Incorrect ID',
+          });
+      } else if (err.message === 'Not found') {
         res
           .status(404)
           .send({
@@ -65,19 +71,19 @@ const createUser = (req, res) => {
 const updateUserInfo = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { ...req.body }, { new: true })
     .orFail(() => new Error('Not found'))
-    .then((newUser) => res.status(201).send(newUser))
+    .then((newUser) => res.status(200).send(newUser))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
+        res
+          .status(400)
+          .send({
+            message: 'Incorrect ID',
+          });
+      } else if (err.name === 'ValidationError') {
         res
           .status(400)
           .send({
             message: 'Incorrect data',
-          });
-      } else if (err.message === 'Not found') {
-        res
-          .status(404)
-          .send({
-            message: 'User not found',
           });
       } else {
         res
@@ -94,17 +100,17 @@ const updateUserAvatar = (req, res) => {
     .orFail(() => new Error('Not found'))
     .then((newUser) => res.status(200).send(newUser))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
+        res
+          .status(400)
+          .send({
+            message: 'Incorrect ID',
+          });
+      } else if (err.name === 'ValidationError') {
         res
           .status(400)
           .send({
             message: 'Incorrect data',
-          });
-      } else if (err.message === 'Not found') {
-        res
-          .status(404)
-          .send({
-            message: 'User not found',
           });
       } else {
         res
