@@ -1,15 +1,5 @@
 const User = require('../models/user');
 
-function checkValidationError (error, res) {
-  if (error.name === 'ValidationError') {
-    return res
-      .status(400)
-      .send({
-        message: 'Incorrect data',
-      });
-  }
-}
-
 const getUsers = (req, res) => {
   User.find({})
     .orFail(() => new Error('Not found'))
@@ -56,18 +46,17 @@ const createUser = (req, res) => {
   User.create(req.body)
     .then((user) => res.status(201).send(user))
     .catch((err) => {
-      checkValidationError(err, res);
-       if (!req.body.name || !req.body.about || !req.body.avatar) {
+      if (err.name === 'ValidationError') {
         res
           .status(400)
           .send({
-            message: 'Incorrect data, the request must contain: name, about, avatar',
+            message: 'Incorrect data',
           });
       } else {
         res
           .status(500)
           .send({
-            message: 'Iternal server error', err: err.message, stack: err.stack,
+            message: 'На сервере произошла ошибка', err: err.message, stack: err.stack,
           });
       }
     });
@@ -78,11 +67,11 @@ const updateUserInfo = (req, res) => {
     .orFail(() => new Error('Not found'))
     .then((newUser) => res.status(201).send(newUser))
     .catch((err) => {
-      if (!req.body) {
+      if (err.name === 'ValidationError') {
         res
           .status(400)
           .send({
-            message: 'Incorrect data, the request must contain: name or about or avatar',
+            message: 'Incorrect data',
           });
       } else if (err.message === 'Not found') {
         res
@@ -94,7 +83,7 @@ const updateUserInfo = (req, res) => {
         res
           .status(500)
           .send({
-            message: 'Iternal server error', err: err.message, stack: err.stack,
+            message: 'На сервере произошла ошибка', err: err.message, stack: err.stack,
           });
       }
     });
@@ -103,13 +92,13 @@ const updateUserInfo = (req, res) => {
 const updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, ({ avatar: req.body.avatar }), { new: true })
     .orFail(() => new Error('Not found'))
-    .then((newUser) => res.status(201).send(newUser))
+    .then((newUser) => res.status(200).send(newUser))
     .catch((err) => {
-      if (!req.body.avatar) {
+      if (err.name === 'ValidationError') {
         res
           .status(400)
           .send({
-            message: 'Incorrect data, the request must contain avatar',
+            message: 'Incorrect data',
           });
       } else if (err.message === 'Not found') {
         res
@@ -121,7 +110,7 @@ const updateUserAvatar = (req, res) => {
         res
           .status(500)
           .send({
-            message: 'Iternal server error', err: err.message, stack: err.stack,
+            message: 'На сервере произошла ошибка', err: err.message, stack: err.stack,
           });
       }
     });
