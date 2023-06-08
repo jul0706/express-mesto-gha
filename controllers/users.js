@@ -15,7 +15,7 @@ const getUsers = (req, res) => {
         res
           .status(500)
           .send({
-            message: 'Iternal server error', err: err.message, stack: err.stack,
+            message: 'На сервере произошла ошибка', err: err.message, stack: err.stack,
           });
       }
     });
@@ -42,7 +42,7 @@ const getUserById = (req, res) => {
         res
           .status(500)
           .send({
-            message: 'Iternal server error', err: err.message, stack: err.stack,
+            message: 'На сервере произошла ошибка', err: err.message, stack: err.stack,
           });
       }
     });
@@ -69,7 +69,11 @@ const createUser = (req, res) => {
 };
 
 const updateUserInfo = (req, res) => {
-  User.findByIdAndUpdate(req.user._id, { ...req.body }, { new: true })
+  User.findByIdAndUpdate(
+    req.user._id,
+    ({ name: req.body.name, about: req.body.about }),
+    { new: true, runValidators: true },
+  )
     .orFail(() => new Error('Not found'))
     .then((newUser) => res.status(200).send(newUser))
     .catch((err) => {
