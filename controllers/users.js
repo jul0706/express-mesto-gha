@@ -1,12 +1,12 @@
 const User = require('../models/user');
 
-const getUsers = ('/users', (req, res) => {
+const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
     .catch((err) => res.status(500).send({ message: 'Iternal server error', err: err.message, stack: err.stack }));
-});
+};
 
-const getUserById = ('/users/:id', (req, res) => {
+const getUserById = (req, res) => {
   User.findById(req.params.id)
     .orFail(() => new Error('Not found'))
     .then((user) => res.status(200).send(user))
@@ -25,16 +25,23 @@ const getUserById = ('/users/:id', (req, res) => {
           });
       }
     });
-});
+};
 
-const createUser = ('/users', (req, res) => {
+const createUser = (req, res) => {
   User.create(req.body)
     .then((user) => res.status(201).send(user))
     .catch((err) => res.status(500).send({ message: 'Iternal server error', err: err.message, stack: err.stack }));
-});
+};
+
+const updateUser = (req, res) => {
+  User.findByIdAndUpdate(req.user._id, { ...req.body }, { new: true })
+    .then((newUser) => res.status(201).send(newUser))
+    .catch((err) => res.status(500).send({ message: 'Iternal server error', err: err.message, stack: err.stack }));
+};
 
 module.exports = {
   getUsers,
   getUserById,
   createUser,
+  updateUser,
 };
