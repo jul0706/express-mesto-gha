@@ -1,15 +1,15 @@
-const User = require('../models/user');
+const Card = require('../models/card');
 
-const getUsers = ('/users', (req, res) => {
-  User.find({})
-    .then((users) => res.status(200).send(users))
+const getCards = ('/cards', (req, res) => {
+  Card.find({})
+    .then((cards) => res.status(200).send(cards))
     .catch((err) => res.status(500).send({ message: 'Iternal server error', err: err.message, stack: err.stack }));
 });
 
-const getUserById = ('/users/:id', (req, res) => {
-  User.findById(req.params.id)
+const deleteCard = ('/cards/:cardId', (req, res) => {
+  Card.findByIdAndRemove(req.params.cardId)
     .orFail(() => new Error('Not found'))
-    .then((user) => res.status(200).send(user))
+    .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
       if (err.message === 'Not found') {
         res
@@ -27,14 +27,17 @@ const getUserById = ('/users/:id', (req, res) => {
     });
 });
 
-const createUser = ('/users', (req, res) => {
-  User.create(req.body)
-    .then((user) => res.status(201).send(user))
+const createCard = ('/cards', (req, res) => {
+  Card.create({
+    ...req.body,
+    owner: req.user._id,
+  })
+    .then((card) => res.status(201).send(card))
     .catch((err) => res.status(500).send({ message: 'Iternal server error', err: err.message, stack: err.stack }));
 });
 
 module.exports = {
-  getUsers,
-  getUserById,
-  createUser,
+  getCards,
+  deleteCard,
+  createCard,
 };
