@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 const getUsers = (req, res) => {
@@ -49,8 +50,16 @@ const getUserById = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  User.create(req.body)
-    .then((user) => res.status(201).send(user))
+  bcrypt.hash(String(req.body.password), 10)
+    .then((hash) => User.create({
+      ...req.body,
+      password: hash,
+    }))
+    .then((user) => {
+      res
+        .status(201)
+        .send(user.toJSON());
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res
@@ -126,10 +135,49 @@ const updateUserAvatar = (req, res) => {
     });
 };
 
+const login = (req, res) => {
+  const { email, password } = req.body;
+  User.findOne({ email })
+    .select('+password')
+    .orFail(() => new Error('Пользователь не найден'))
+    .then((user) => {
+      bcrypt.compare(String(password), user.password)
+        .then((isUserFind) => {
+          if (isUserFind) {
+            res.status(200).send({ data: user.toJSON() });
+          } else {
+            res.status(403).send({ message: 'Неправильный пароль' });
+          }
+        });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res
+          .status(400)
+          .send({
+            message: 'Incorrect ID',
+          });
+      } else if (err.name === 'ValidationError') {
+        res
+          .status(400)
+          .send({
+            message: 'Incorrect data',
+          });
+      } else {
+        res
+          .status(500)
+          .send({
+            message: 'На сервере произошла ошибка', err: err.message, stack: err.stack,
+          });
+      }
+    });
+};
+
 module.exports = {
   getUsers,
   getUserById,
   createUser,
   updateUserInfo,
   updateUserAvatar,
+  login,
 };

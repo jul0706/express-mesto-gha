@@ -21,6 +21,8 @@
     "nodemon": "^2.0.22"
   },
   "dependencies": {
+    "bcrypt": "^5.1.0",
+    "bcryptjs": "^2.4.3",
     "editorconfig": "^1.0.2",
     "express": "^4.18.2",
     "mongodb": "5.6",
