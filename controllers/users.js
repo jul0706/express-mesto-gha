@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jsonWebToken = require('jsonwebtoken');
 const User = require('../models/user');
 
 const getUsers = (req, res) => {
@@ -144,6 +145,14 @@ const login = (req, res) => {
       bcrypt.compare(String(password), user.password)
         .then((isUserFind) => {
           if (isUserFind) {
+            const jwt = jsonWebToken.sign({
+              _id: user._id,
+            }, 'SECRET');
+            res.cookie('jwt', jwt, {
+              maxAge: 360000,
+              httpOnly: true,
+              sameAite: true,
+            });
             res.status(200).send({ data: user.toJSON() });
           } else {
             res.status(403).send({ message: 'Неправильный пароль' });
