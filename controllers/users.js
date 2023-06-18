@@ -147,13 +147,13 @@ const login = (req, res) => {
           if (isUserFind) {
             const jwt = jsonWebToken.sign({
               _id: user._id,
-            }, 'SECRET');
+            }, process.env.JWT_SECRET);
             res.cookie('jwt', jwt, {
               maxAge: 360000,
               httpOnly: true,
-              sameAite: true,
+              sameSite: true,
             });
-            res.status(200).send({ data: user.toJSON() });
+            res.status(200).send({ token: jwt });
           } else {
             res.status(403).send({ message: 'Неправильный пароль' });
           }

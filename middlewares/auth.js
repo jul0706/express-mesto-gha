@@ -5,7 +5,7 @@ const auth = (req, res, next) => {
   let payload;
 
   try {
-    payload = jsonWebToken.verify(token, 'SECRET');
+    payload = jsonWebToken.verify(token, process.env.JWT_SECRET);
   } catch (err) {
     next(err);
   }
