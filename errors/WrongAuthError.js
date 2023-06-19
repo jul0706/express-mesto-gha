@@ -1,4 +1,4 @@
-class WrongAuth extends Error {
+class WrongAuthError extends Error {
   constructor(err) {
     super(err);
     this.message = 'Неверный логин или пароль';
@@ -6,4 +6,4 @@ class WrongAuth extends Error {
   }
 }
 
-module.exports = WrongAuth;
+module.exports = WrongAuthError;

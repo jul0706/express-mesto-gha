@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const User = require('../models/user');
 
+const { JWT_SECRET = 'SECRET' } = process.env;
+
 const getUsers = (req, res, next) => {
   User.find({})
     .orFail(() => {
@@ -84,7 +86,7 @@ const login = (req, res, next) => {
           if (isUserFind) {
             const jwt = jsonWebToken.sign({
               _id: user._id,
-            }, process.env.JWT_SECRET);
+            }, JWT_SECRET);
             res.cookie('jwt', jwt, {
               maxAge: 360000,
               httpOnly: true,
