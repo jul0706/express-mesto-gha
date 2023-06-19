@@ -27,7 +27,7 @@ const getUserById = (req, res, next) => {
 const createUser = (req, res, next) => {
   if (!req.body.password) {
     const err = new Error();
-    err.name = 'Validation Error';
+    err.name = 'ValidationError';
     next(err);
   }
   bcrypt.hash(String(req.body.password), 10)

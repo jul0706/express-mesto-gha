@@ -7,22 +7,27 @@ const {
   WrongAuthError,
 } = require('../errors/errors');
 
+const { NOT_FOUND_ERROR = 'NotFound' } = process.env;
+const { CAST_ERROR = 'CastError' } = process.env;
+const { VALIDATION_ERROR = 'ValidationError' } = process.env;
+const { MONGO_SERVER_ERROR = 'MongoServerError' } = process.env;
+
 const errorHandler = (err, req, res, next) => {
   let error;
   switch (err.name) {
-    case 'Auth error':
+    case process.env.AUTH_ERROR:
       error = new WrongAuthError(err);
       break;
-    case 'Not found':
+    case NOT_FOUND_ERROR:
       error = new NotFoundError(err);
       break;
-    case 'CastError:':
+    case CAST_ERROR:
       error = new IncorrectIdError(err);
       break;
-    case 'ValidationError':
+    case VALIDATION_ERROR:
       error = new ValidationError(err);
       break;
-    case 'MongoServerError':
+    case MONGO_SERVER_ERROR:
       error = new DublicateUserError(err);
       break;
     default:
