@@ -7,8 +7,9 @@ const router = require('./routes');
 const errorHandler = require('./middlewares/errors');
 
 const app = express();
+const { BASE_URL_DB = 'mongodb://127.0.0.1/mestodb' } = process.env;
 
-mongoose.connect(process.env.BASE_URL_DB, {
+mongoose.connect(BASE_URL_DB, {
   useNewUrlParser: true,
 });
 
