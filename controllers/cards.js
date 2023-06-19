@@ -10,7 +10,7 @@ const deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .orFail(() => {
       const err = new Error();
-      err.name = 'Not found';
+      err.name = process.env.NOT_FOUND_ERROR;
       next(err);
     })
     .then((card) => {
@@ -20,7 +20,7 @@ const deleteCard = (req, res, next) => {
           .send({ data: card });
       } else {
         const err = new Error();
-        err.name = 'Auth error';
+        err.name = process.env.AUTH_ERROR;
         next(err);
       }
     })
@@ -40,7 +40,7 @@ const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .orFail(() => {
       const err = new Error();
-      err.name = 'Not found';
+      err.name = process.env.NOT_FOUND_ERROR;
       next(err);
     })
     .then((newCard) => res.status(201).send(newCard))
@@ -51,7 +51,7 @@ const disLikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .orFail(() => {
       const err = new Error();
-      err.name = 'Not found';
+      err.name = process.env.NOT_FOUND_ERROR;
       next(err);
     })
     .then((newCard) => res.status(200).send(newCard))

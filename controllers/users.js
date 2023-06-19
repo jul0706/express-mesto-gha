@@ -2,13 +2,11 @@ const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const User = require('../models/user');
 
-const { JWT_SECRET = 'SECRET' } = process.env;
-
 const getUsers = (req, res, next) => {
   User.find({})
     .orFail(() => {
       const err = new Error();
-      err.name = 'Not found';
+      err.name = process.env.NOT_FOUND_ERROR;
       next(err);
     })
     .then((users) => res.status(200).send(users))
@@ -19,7 +17,7 @@ const getUserById = (req, res, next) => {
   User.findById(req.params.id)
     .orFail(() => {
       const err = new Error();
-      err.name = 'Not found';
+      err.name = process.env.NOT_FOUND_ERROR;
       next(err);
     })
     .then((user) => res.status(200).send(user))
@@ -29,7 +27,7 @@ const getUserById = (req, res, next) => {
 const createUser = (req, res, next) => {
   if (!req.body.password) {
     const err = new Error();
-    err.name = 'ValidationError';
+    err.name = process.env.VALIDATION_ERROR;
     next(err);
   }
   bcrypt.hash(String(req.body.password), 10)
@@ -53,7 +51,7 @@ const updateUserInfo = (req, res, next) => {
   )
     .orFail(() => {
       const err = new Error();
-      err.name = 'Not found';
+      err.name = process.env.NOT_FOUND_ERROR;
       next(err);
     })
     .then((newUser) => res.status(200).send(newUser))
@@ -64,7 +62,7 @@ const updateUserAvatar = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, ({ avatar: req.body.avatar }), { new: true })
     .orFail(() => {
       const err = new Error();
-      err.name = 'Not found';
+      err.name = process.env.NOT_FOUND_ERROR;
       next(err);
     })
     .then((newUser) => res.status(200).send(newUser))
@@ -77,7 +75,7 @@ const login = (req, res, next) => {
     .select('+password')
     .orFail(() => {
       const err = new Error();
-      err.name = 'Auth error';
+      err.name = process.env.AUTH_ERROR;
       next(err);
     })
     .then((user) => {
@@ -86,7 +84,7 @@ const login = (req, res, next) => {
           if (isUserFind) {
             const jwt = jsonWebToken.sign({
               _id: user._id,
-            }, JWT_SECRET);
+            }, process.env.JWT_SECRET);
             res.cookie('jwt', jwt, {
               maxAge: 360000,
               httpOnly: true,
@@ -95,7 +93,7 @@ const login = (req, res, next) => {
             res.status(200).send({ token: jwt });
           } else {
             const err = new Error();
-            err.name = 'Auth error';
+            err.name = process.env.AUTH_ERROR;
             next(err);
           }
         });
