@@ -25,6 +25,11 @@ const getUserById = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
+  if (!req.body.password) {
+    const err = new Error();
+    err.name = 'Validation Error';
+    next(err);
+  }
   bcrypt.hash(String(req.body.password), 10)
     .then((hash) => User.create({
       ...req.body,
@@ -70,7 +75,7 @@ const login = (req, res, next) => {
     .select('+password')
     .orFail(() => {
       const err = new Error();
-      err.name = 'Not found';
+      err.name = 'Auth error';
       next(err);
     })
     .then((user) => {

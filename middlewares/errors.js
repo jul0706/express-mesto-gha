@@ -19,7 +19,7 @@ const errorHandler = (err, req, res, next) => {
     case 'CastError:':
       error = new IncorrectIdError(err);
       break;
-    case 'Validation Error':
+    case 'ValidationError':
       error = new ValidationError(err);
       break;
     case 'MongoServerError':
