@@ -1,4 +1,4 @@
-class IncorrectId extends Error {
+class IncorrectIdError extends Error {
   constructor(err) {
     super(err);
     this.message = 'Передан некорректный ID';
@@ -6,4 +6,4 @@ class IncorrectId extends Error {
   }
 }
 
-module.exports = IncorrectId;
+module.exports = IncorrectIdError;
