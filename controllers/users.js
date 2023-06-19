@@ -2,55 +2,29 @@ const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const User = require('../models/user');
 
-const getUsers = (req, res) => {
+const getUsers = (req, res, next) => {
   User.find({})
-    .orFail(() => new Error('Not found'))
+    .orFail(() => {
+      const err = new Error();
+      err.name = 'Not found';
+      next(err);
+    })
     .then((users) => res.status(200).send(users))
-    .catch((err) => {
-      if (err.message === 'Not found') {
-        res
-          .status(404)
-          .send({
-            message: 'User not found',
-          });
-      } else {
-        res
-          .status(500)
-          .send({
-            message: 'На сервере произошла ошибка', err: err.message, stack: err.stack,
-          });
-      }
-    });
+    .catch(next);
 };
 
-const getUserById = (req, res) => {
+const getUserById = (req, res, next) => {
   User.findById(req.params.id)
-    .orFail(() => new Error('Not found'))
+    .orFail(() => {
+      const err = new Error();
+      err.name = 'Not found';
+      next(err);
+    })
     .then((user) => res.status(200).send(user))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res
-          .status(400)
-          .send({
-            message: 'Incorrect ID',
-          });
-      } else if (err.message === 'Not found') {
-        res
-          .status(404)
-          .send({
-            message: 'User not found',
-          });
-      } else {
-        res
-          .status(500)
-          .send({
-            message: 'На сервере произошла ошибка', err: err.message, stack: err.stack,
-          });
-      }
-    });
+    .catch(next);
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   bcrypt.hash(String(req.body.password), 10)
     .then((hash) => User.create({
       ...req.body,
@@ -61,86 +35,44 @@ const createUser = (req, res) => {
         .status(201)
         .send(user.toJSON());
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res
-          .status(400)
-          .send({
-            message: 'Incorrect data',
-          });
-      } else {
-        res
-          .status(500)
-          .send({
-            message: 'На сервере произошла ошибка', err: err.message, stack: err.stack,
-          });
-      }
-    });
+    .catch(next);
 };
 
-const updateUserInfo = (req, res) => {
+const updateUserInfo = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     ({ name: req.body.name, about: req.body.about }),
     { new: true, runValidators: true },
   )
-    .orFail(() => new Error('Not found'))
+    .orFail(() => {
+      const err = new Error();
+      err.name = 'Not found';
+      next(err);
+    })
     .then((newUser) => res.status(200).send(newUser))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res
-          .status(400)
-          .send({
-            message: 'Incorrect ID',
-          });
-      } else if (err.name === 'ValidationError') {
-        res
-          .status(400)
-          .send({
-            message: 'Incorrect data',
-          });
-      } else {
-        res
-          .status(500)
-          .send({
-            message: 'На сервере произошла ошибка', err: err.message, stack: err.stack,
-          });
-      }
-    });
+    .catch(next);
 };
 
-const updateUserAvatar = (req, res) => {
+const updateUserAvatar = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, ({ avatar: req.body.avatar }), { new: true })
-    .orFail(() => new Error('Not found'))
+    .orFail(() => {
+      const err = new Error();
+      err.name = 'Not found';
+      next(err);
+    })
     .then((newUser) => res.status(200).send(newUser))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res
-          .status(400)
-          .send({
-            message: 'Incorrect ID',
-          });
-      } else if (err.name === 'ValidationError') {
-        res
-          .status(400)
-          .send({
-            message: 'Incorrect data',
-          });
-      } else {
-        res
-          .status(500)
-          .send({
-            message: 'На сервере произошла ошибка', err: err.message, stack: err.stack,
-          });
-      }
-    });
+    .catch(next);
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
   User.findOne({ email })
     .select('+password')
-    .orFail(() => new Error('Пользователь не найден'))
+    .orFail(() => {
+      const err = new Error();
+      err.name = 'Not found';
+      next(err);
+    })
     .then((user) => {
       bcrypt.compare(String(password), user.password)
         .then((isUserFind) => {
@@ -155,31 +87,13 @@ const login = (req, res) => {
             });
             res.status(200).send({ token: jwt });
           } else {
-            res.status(403).send({ message: 'Неправильный пароль' });
+            const err = new Error();
+            err.name = 'Auth error';
+            next(err);
           }
         });
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res
-          .status(400)
-          .send({
-            message: 'Incorrect ID',
-          });
-      } else if (err.name === 'ValidationError') {
-        res
-          .status(400)
-          .send({
-            message: 'Incorrect data',
-          });
-      } else {
-        res
-          .status(500)
-          .send({
-            message: 'На сервере произошла ошибка', err: err.message, stack: err.stack,
-          });
-      }
-    });
+    .catch(next);
 };
 
 module.exports = {

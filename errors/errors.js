@@ -1,13 +1,15 @@
-const incorrectIdError = require('./IncorrectId');
-const serverError = require('./ServerError');
-const userNotFoundError = require('./UserNotFound');
-const validationError = require('./ValidationError');
-const abstractError = require('./AbstractError');
+const IncorrectIdError = require('./IncorrectIdError');
+const ServerError = require('./ServerError');
+const NotFoundError = require('./NotFoundError');
+const ValidationError = require('./ValidationError');
+const DublicateUserError = require('./DublicateUserError');
+const WrongAuthError = require('./WrongAuthError');
 
 module.exports = {
-  incorrectIdError,
-  serverError,
-  userNotFoundError,
-  validationError,
-  abstractError,
+  IncorrectIdError,
+  ServerError,
+  NotFoundError,
+  ValidationError,
+  DublicateUserError,
+  WrongAuthError,
 };

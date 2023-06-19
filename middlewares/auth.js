@@ -7,10 +7,10 @@ const auth = (req, res, next) => {
   try {
     payload = jsonWebToken.verify(token, process.env.JWT_SECRET);
   } catch (err) {
+    err.name = 'Auth error';
     next(err);
   }
   req.user = payload;
-
   next();
 };
 
