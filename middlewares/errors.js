@@ -1,3 +1,4 @@
+const UnauthorizedError = require('../errors/UnauthorizedError');
 const {
   IncorrectIdError,
   ServerError,
@@ -10,6 +11,9 @@ const {
 const errorHandler = (err, req, res, next) => {
   let error;
   switch (err.name) {
+    case process.env.UNAUTHORIZED_ERROR:
+      error = new UnauthorizedError(err);
+      break;
     case process.env.AUTH_ERROR:
       error = new WrongAuthError(err);
       break;

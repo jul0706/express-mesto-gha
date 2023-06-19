@@ -20,7 +20,7 @@ const deleteCard = (req, res, next) => {
           .send({ data: card });
       } else {
         const err = new Error();
-        err.name = process.env.AUTH_ERROR;
+        err.name = process.env.UNAUTHORIZED_ERROR;
         next(err);
       }
     })
