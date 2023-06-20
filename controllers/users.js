@@ -14,7 +14,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  User.findById(req.params.id)
+  User.findById(req.params._id)
     .orFail(() => {
       const err = new Error();
       err.name = process.env.NOT_FOUND_ERROR;
@@ -59,7 +59,11 @@ const updateUserInfo = (req, res, next) => {
 };
 
 const updateUserAvatar = (req, res, next) => {
-  User.findByIdAndUpdate(req.user._id, ({ avatar: req.body.avatar }), { new: true })
+  User.findByIdAndUpdate(req.user._id, ({
+    avatar: req.body.avatar,
+  }), {
+    new: true, runValidators: true,
+  })
     .orFail(() => {
       const err = new Error();
       err.name = process.env.NOT_FOUND_ERROR;
