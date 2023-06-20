@@ -29,7 +29,7 @@ const getUserById = (req, res, next) => {
 };
 
 const getUserInfo = (req, res, next) => {
-  getUser(req.user.id, res, next);
+  getUser(req.user._id, res, next);
 };
 
 const createUser = (req, res, next) => {
@@ -67,7 +67,7 @@ const updateUserInfo = (req, res, next) => {
 };
 
 const updateUserAvatar = (req, res, next) => {
-  User.findByIdAndUpdate(req.user.id, ({
+  User.findByIdAndUpdate(req.user._id, ({
     avatar: req.body.avatar,
   }), {
     new: true, runValidators: true,
