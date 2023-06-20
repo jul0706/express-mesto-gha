@@ -2,6 +2,17 @@ const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const User = require('../models/user');
 
+function getUser(id, res, next) {
+  User.findById(id)
+    .orFail(() => {
+      const err = new Error();
+      err.name = process.env.NOT_FOUND_ERROR;
+      next(err);
+    })
+    .then((user) => res.status(200).send(user))
+    .catch(next);
+}
+
 const getUsers = (req, res, next) => {
   User.find({})
     .orFail(() => {
@@ -14,14 +25,11 @@ const getUsers = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  User.findById(req.params._id)
-    .orFail(() => {
-      const err = new Error();
-      err.name = process.env.NOT_FOUND_ERROR;
-      next(err);
-    })
-    .then((user) => res.status(200).send(user))
-    .catch(next);
+  getUser(req.params.id, res, next);
+};
+
+const getUserInfo = (req, res, next) => {
+  getUser(req.user.id, res, next);
 };
 
 const createUser = (req, res, next) => {
@@ -59,7 +67,7 @@ const updateUserInfo = (req, res, next) => {
 };
 
 const updateUserAvatar = (req, res, next) => {
-  User.findByIdAndUpdate(req.user._id, ({
+  User.findByIdAndUpdate(req.user.id, ({
     avatar: req.body.avatar,
   }), {
     new: true, runValidators: true,
@@ -112,4 +120,5 @@ module.exports = {
   updateUserInfo,
   updateUserAvatar,
   login,
+  getUserInfo,
 };
