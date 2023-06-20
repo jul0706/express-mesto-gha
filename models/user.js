@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 
+function validator(v) {
+  return /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/.test(v);
+}
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -17,6 +21,7 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
+    validate: validator,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     required: true,
   },
