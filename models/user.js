@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 function validator(v) {
-  return /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/.test(v);
+  return /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-/]))?/.test(v);
 }
 
 const userSchema = new mongoose.Schema({
