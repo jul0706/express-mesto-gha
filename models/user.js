@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-function validator(v) {
+function validator(v) { // функция для валидации URL!
   return /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-/]))?/.test(v);
 }
 
@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    validate: validator,
+    validate: validator, // указываем функцию для валидации
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     required: true,
   },

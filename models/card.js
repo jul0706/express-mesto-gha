@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-function validator(v) {
+function validator(v) { // функция для валидации URL!
   return /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-/]))?/.test(v);
 }
 
@@ -13,7 +13,7 @@ const cardSchema = new mongoose.Schema({
   },
   link: {
     type: String,
-    validate: validator,
+    validate: validator, // указываем функцию для валидации
     required: true,
   },
   owner: {

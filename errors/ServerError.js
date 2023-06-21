@@ -1,7 +1,7 @@
 class ServerError extends Error {
   constructor(err) {
     super(err);
-    this.message = 'Ошибка сервера';
+    this.message = 'На сервере произошла ошибка';
     this.statusCode = 500;
   }
 }
